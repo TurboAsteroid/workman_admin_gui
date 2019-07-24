@@ -1,0 +1,10 @@
+.wysiwyg-wrapper {
+    background: #888;
+    padding: 10px;
+    border-radius: 10px;
+}
+.wysiwyg-editor {
+    background: #fff;
+    padding: 0 20px;
+    height:400px;
+}
