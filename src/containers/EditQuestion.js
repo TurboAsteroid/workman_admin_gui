@@ -2,13 +2,11 @@ import React, { Component } from 'react';
 import autoBind from 'react-autobind';
 import { connect } from 'react-redux';
 import Error404 from "./Error404";
-import { Editor } from 'react-draft-wysiwyg';
 import * as pollsActions from '../store/polls/actions';
 import * as pollsSelectors from '../store/polls/reducer';
 import {
-    Form, Input, Button, DatePicker, List, Icon, Radio
+    Form, Input, Button, Radio
 } from 'antd'
-import { Link } from 'react-router-dom';
 
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import './css/wysiwyg.css';

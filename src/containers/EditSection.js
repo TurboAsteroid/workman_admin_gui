@@ -8,7 +8,7 @@ import * as structureSelectors from '../store/structure/reducer';
 import * as sectionSelectors from '../store/section/reducer';
 import NewsList from './NewsList';
 import PollsList from './PollsList';
-import ScheduleItemList from './Schedule';
+import ScheduleItemList from './ScheduleList';
 import { EditorState, convertToRaw, ContentState } from 'draft-js';
 import htmlToDraft from 'html-to-draftjs';
 import draftToHtml from 'draftjs-to-html';
@@ -80,6 +80,25 @@ class EditSection extends Component {
     //     }
     // }
 
+    getContentEditor() {
+        switch (this.props.match.params.typeModule) {
+            case "1":
+                return(<Form.Item
+                    label="Основное содержимое"
+                >
+                    <Editor
+                        onEditorStateChange={this.onEditorStateChange}
+                        editorState={this.state.editorState}
+                        wrapperClassName="wysiwyg-wrapper"
+                        editorClassName="wysiwyg-editor"
+                        // editorClassName={classes.editorBlock}
+                        // toolbarCustomButtons={[<CustomOption actions={this.switchType}/>]}
+                    />
+                </Form.Item>);
+            default:
+                return;
+        }
+    }
     getAdditionalOptions() {
         switch (this.props.match.params.typeModule) {
             case "2":
@@ -188,18 +207,7 @@ class EditSection extends Component {
                         </Form.Item>
                     </div>
 
-                    <Form.Item
-                        label="Основное содержимое"
-                    >
-                        <Editor
-                            onEditorStateChange={this.onEditorStateChange}
-                            editorState={this.state.editorState}
-                            wrapperClassName="wysiwyg-wrapper"
-                            editorClassName="wysiwyg-editor"
-                            // editorClassName={classes.editorBlock}
-                            // toolbarCustomButtons={[<CustomOption actions={this.switchType}/>]}
-                        />
-                    </Form.Item>
+                    {this.getContentEditor()}
 
                     {this.showAlert()}
                     <Form.Item>

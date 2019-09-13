@@ -9,6 +9,7 @@ import EditNews from './EditNews'
 import EditPoll from './EditPoll'
 import EditQuestion from './EditQuestion'
 import EditSection from './EditSection';
+import EditSchedule from './EditSchedule';
 
 class MainRouterContent extends Component {
 
@@ -26,6 +27,7 @@ class MainRouterContent extends Component {
                     <Route path="/newsEdit/:moduleId(\d+)/:newsId(\d+)?" component={EditNews} />
                     <Route path="/pollEdit/:moduleId(\d+)/:pollId(\d+)?" component={EditPoll} />
                     <Route path="/questionEdit/:pollId(\d+)/:questionId(\d+)?" component={EditQuestion} />
+                    <Route path="/scheduleEdit/:moduleId(\d+)/:scheduleId(\d+)?" component={EditSchedule} />
                     <Route component={Error404} />
                 </Switch>
         );

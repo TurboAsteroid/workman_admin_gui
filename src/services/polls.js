@@ -1,5 +1,4 @@
 import config from '../config';
-import { browserHistory } from 'react-router'
 
 class pollsService {
     async getQuestionsArray(pollId) {

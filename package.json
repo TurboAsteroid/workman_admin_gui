@@ -34,7 +34,7 @@
     "seamless-immutable": "^7.1.4"
   },
   "scripts": {
-    "start": "set port=3007 && react-scripts start",
+    "start": "set port=3034 && react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

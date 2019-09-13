@@ -1,37 +1,34 @@
 import React, { Component } from 'react';
 import autoBind from 'react-autobind';
 import { connect } from 'react-redux';
-import * as newsActions from '../store/news/actions';
-import * as newsSelectors from '../store/news/reducer';
+import "antd/dist/antd.css";
+import * as scheduleActions from '../store/schedule/actions';
+import * as scheduleSelectors from '../store/schedule/reducer';
+import { withRouter, Link } from 'react-router-dom';
 import { List, Icon, Button } from 'antd';
-import { withRouter,Link } from 'react-router-dom';
-
 
 const IconText = ({ type, text }) => (
     <span>
-            <Icon type={type} style={{ marginRight: 8 }} />
+        <Icon type={type} style={{ marginRight: 8 }} />
         {text}
-        </span>
+    </span>
 );
 
-class newsList extends Component {
+class schedule extends Component {
     constructor(props) {
         super(props);
         autoBind(this);
     }
-
     componentDidMount() {
-        this.props.dispatch(newsActions.fetchNewsItems(this.props.match.params.moduleId));
+        this.props.dispatch(scheduleActions.fetchScheduleItems(this.props.match.params.moduleId));
     }
     render() {
-        if (!this.props.newsArray) return <div>Список новостей пуст</div>;
-
         return <React.Fragment>
-            <h2>Список новостей</h2>
+            <h2>Список элементов</h2>
 
             <p>
-                <Link to={`/newsEdit/${this.props.match.params.moduleId}/`}>
-                    <Button type="primary">Добавить новость</Button>
+                <Link to={`/scheduleEdit/${this.props.match.params.moduleId}/`}>
+                    <Button type="primary">Добавить элемент</Button>
                 </Link>
             </p>
             <List
@@ -42,34 +39,33 @@ class newsList extends Component {
                     },
                     pageSize: 10,
                 }}
-                dataSource={this.props.newsArray}
+                dataSource={this.props.scheduleArray}
                 renderItem={item => (
                     <List.Item
                         key={item.id}
                         actions={[
-                            <Link to={`/newsEdit/${this.props.match.params.moduleId}/${item.id}`}>
+                            <Link to={`/scheduleEdit/${this.props.match.params.moduleId}/${item.id}`}>
                                 <IconText type="edit-o" text="Редактировать" />
                             </Link>
                         ]}
                     >
                         <List.Item.Meta
-                            title={item.title}
-                            description={item.description}
+                            title={item.header}
                         />
                     </List.Item>
                 )}
             />
         </React.Fragment>
     }
-
 }
 
 function mapStateToProps(state) {
 
-    const newsArray = newsSelectors.getNewsArray(state);
+    const scheduleArray = scheduleSelectors.getScheduleArray(state);
     return {
-        newsArray
+        scheduleArray
     };
 }
 
-export default withRouter(connect(mapStateToProps)(newsList))
+
+export default withRouter(connect(mapStateToProps)(schedule))
