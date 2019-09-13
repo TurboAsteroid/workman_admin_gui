@@ -11,6 +11,16 @@ export function fetchNewsItems(moduleId) {
         }
     };
 }
+export function deleteNews(newsId) {
+    return async(dispatch, getState) => {
+        try {
+            const newsDeleteResult = await newsService.deleteNews(newsId);
+            dispatch({ type: types.NEWS_DELETE, newsDeleteResult });
+        } catch (error) {
+            console.error("deleteNews", error);
+        }
+    };
+}
 export function getNews(newsId) {
     return async(dispatch, getState) => {
         try {

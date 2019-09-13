@@ -21,6 +21,10 @@ export default function reduce(state = initialState, action = {}) {
             return state.merge({
                 newsSaveResult: action.newsSaveResult
             });
+        case types.NEWS_DELETE:
+            return state.merge({
+                newsDeleteResult: action.newsDeleteResult
+            });
         case types.NEWS_CLEAN:
             return state.merge({
                 newsObject: undefined,
@@ -46,4 +50,8 @@ export function getNewsObject(state) {
 export function getNewsSaveResult(state) {
     const getNewsSaveResult = state.news.newsSaveResult;
     return getNewsSaveResult;
+}
+export function getNewsDeleteResult(state) {
+    const getNewsDeleteResult = state.news.newsDeleteResult;
+    return getNewsDeleteResult;
 }

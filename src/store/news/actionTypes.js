@@ -4,3 +4,4 @@ export const NEWS_FETCHED = 'news.NEWS_FETCHED';
 export const NEWS_GET = 'news.NEWS_GET';
 export const NEWS_POST = 'news.NEWS_POST';
 export const NEWS_CLEAN = 'news.NEWS_CLEAN';
+export const NEWS_DELETE = 'news.NEWS_DELETE';

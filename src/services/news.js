@@ -37,6 +37,28 @@ class newsService {
 
         return data;
     }
+    async deleteNews(newsId) {
+        if (!newsId) {
+            return undefined;
+        }
+        const url = `${config.api}admin/news/delete`;
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({newsId: newsId})
+        });
+        if (!response.ok) {
+            throw new Error(`Не удаётся удалить новость ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        return data;
+    }
     async saveNews(news, filesList) {
         if (news.newsId === undefined) news.newsId = 0;
 

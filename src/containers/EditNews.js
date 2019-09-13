@@ -42,6 +42,9 @@ class EditNews extends Component {
             });
         }
     }
+    delete() {
+        this.props.dispatch(newsActions.deleteNews(this.props.match.params.newsId))
+    }
     showAlert(){
         if (this.props.newsSaveResult) {
             let message = this.props.newsSaveResult.message;
@@ -55,6 +58,19 @@ class EditNews extends Component {
                         closable
                     />
                     <Redirect to={"/1/2/" + this.props.match.params.moduleId}/>
+                </React.Fragment>
+            )
+        } else if (this.props.newsDeleteResult) {
+            let message = this.props.newsDeleteResult.message;
+            let status = this.props.newsDeleteResult.status;
+            return (
+                <React.Fragment>
+                    <Alert
+                        message={message}
+                        type={status === "ok" ? "success" : "error"}
+                        closable
+                    />
+                    <Redirect to={"/1/2/" + this.props.match.params.moduleId }/>
                 </React.Fragment>
             )
         }
@@ -205,6 +221,7 @@ class EditNews extends Component {
                     {this.showAlert()}
                     <Form.Item>
                         <Button type="primary" htmlType="submit">Сохранить</Button>
+                        <Button type="danger" onClick={this.delete}>Удалить</Button>
                     </Form.Item>
                 </Form>
             </React.Fragment>
@@ -214,11 +231,12 @@ class EditNews extends Component {
 
 function mapStateToProps(state) {
     const newsObject = newsSelectors.getNewsObject(state);
-
     const newsSaveResult = newsSelectors.getNewsSaveResult(state);
+    const newsDeleteResult = newsSelectors.getNewsDeleteResult(state);
     return {
         newsObject,
-        newsSaveResult
+        newsSaveResult,
+        newsDeleteResult
     };
 }
 

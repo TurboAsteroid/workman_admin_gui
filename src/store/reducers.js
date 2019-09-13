@@ -4,6 +4,7 @@ import section from './section/reducer';
 import news from './news/reducer';
 import users from './users/reducer';
 import polls from './polls/reducer';
+import schedule from './schedule/reducer';
 
 export {
     mainMenu,
@@ -11,5 +12,6 @@ export {
     section,
     news,
     users,
-    polls
+    polls,
+    schedule
 };

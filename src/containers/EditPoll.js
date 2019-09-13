@@ -2,28 +2,18 @@ import React, { Component } from 'react';
 import autoBind from 'react-autobind';
 import { connect } from 'react-redux';
 import Error404 from "./Error404";
-import { Editor } from 'react-draft-wysiwyg';
 import * as pollsActions from '../store/polls/actions';
 import * as pollsSelectors from '../store/polls/reducer';
 import { Redirect } from 'react-router'
 import {
-    Form, Input, Button, DatePicker, List, Icon, Alert
+    Form, Input, Button, DatePicker, Alert
 } from 'antd'
-import { Link } from 'react-router-dom';
 import QuestionsList from './QuestionsList';
 
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import './css/wysiwyg.css';
 
 const moment = require('moment');
-
-
-const IconText = ({ type, text }) => (
-    <span>
-        <Icon type={type} style={{ marginRight: 8 }} />
-        {text}
-    </span>
-);
 
 class EditPoll extends Component {
     constructor(props) {
