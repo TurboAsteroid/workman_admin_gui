@@ -44,7 +44,6 @@ export function getNewsArray(state) {
 }
 export function getNewsObject(state) {
     const newsObject = state.news.newsObject;
-
     return newsObject;
 }
 export function getNewsSaveResult(state) {

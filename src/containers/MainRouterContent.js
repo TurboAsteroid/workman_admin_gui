@@ -2,14 +2,14 @@ import React, { Component } from 'react';
 import autoBind from 'react-autobind';
 import { connect } from 'react-redux';
 import { Route, Switch, withRouter } from 'react-router-dom';
-import MainPage from './MainPage'
+import LoginPage from './LoginPage'
 import Error404 from './Error404'
-import ChooseMainModule from './ChooseMainModule'
-import EditNews from './EditNews'
-import EditPoll from './EditPoll'
-import EditQuestion from './EditQuestion'
+import EditNews from './news/EditNews'
+import EditPoll from './polls/EditPoll'
+import EditQuestion from './polls/EditQuestion'
 import EditSection from './EditSection';
-import EditSchedule from './EditSchedule';
+import EditSchedule from './schedule/EditSchedule';
+import StructureModuleEditor from './StructureModuleEditor'
 
 class MainRouterContent extends Component {
 
@@ -20,10 +20,10 @@ class MainRouterContent extends Component {
     render() {
         return (
                 <Switch>
-                    <Route exact path="/" component={MainPage} />
+                    <Route exact path="/login" component={LoginPage} />
 
-                    <Route exact path="/:mainMenuId(\d+)" component={ChooseMainModule} />
-                    <Route exact path="/:mainMenuId(\d+)/:typeModule(\d+)/:moduleId(\d+)" component={EditSection} />
+                    <Route exact path="/" component={StructureModuleEditor} />
+                    <Route exact path="/:typeModule(\d+)/:moduleId(\d+)" component={EditSection} />
                     <Route path="/newsEdit/:moduleId(\d+)/:newsId(\d+)?" component={EditNews} />
                     <Route path="/pollEdit/:moduleId(\d+)/:pollId(\d+)?" component={EditPoll} />
                     <Route path="/questionEdit/:pollId(\d+)/:questionId(\d+)?" component={EditQuestion} />

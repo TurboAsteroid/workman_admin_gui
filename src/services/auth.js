@@ -1,18 +1,19 @@
 import config from '../config';
 import helper from '../helper';
 
-class SectionService {
-    async postSectionData(data) {
-        const response = await helper.ajax(`${config.api}admin/section`, {
+class authService {
+    async sendAuth(authParam) {
+        const response = await helper.ajax(`${config.api}login`, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify(authParam)
         });
+
         return response;
     }
 }
 
-export default new SectionService();
+export default new authService();

@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import autoBind from 'react-autobind';
 import { connect } from 'react-redux';
-import Error404 from "./Error404";
-import * as pollsActions from '../store/polls/actions';
-import * as pollsSelectors from '../store/polls/reducer';
+import Error404 from "../Error404";
+import * as pollsActions from '../../store/polls/actions';
+import * as pollsSelectors from '../../store/polls/reducer';
 import { Redirect } from 'react-router'
 import {
     Form, Input, Button, DatePicker, Alert
@@ -11,7 +11,7 @@ import {
 import QuestionsList from './QuestionsList';
 
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-import './css/wysiwyg.css';
+import '../css/wysiwyg.css';
 
 const moment = require('moment');
 
@@ -42,7 +42,7 @@ class EditPoll extends Component {
                             type={status === "ok" ? "success" : "error"}
                             closable
                         />
-                        <Redirect to={"/1/3/" + this.props.match.params.moduleId }/>
+                        <Redirect to={"/3/" + this.props.match.params.moduleId }/>
                     </React.Fragment>
                 )
             }

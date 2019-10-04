@@ -1,9 +1,9 @@
 import config from '../config';
+import helper from '../helper';
 
 class usersService {
     async postUserData(values) {
-        const url = `${config.api}admin/users/add`;
-        const response = await fetch(url, {
+        const response = await helper.ajax(`${config.api}admin/users/add`, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -11,13 +11,7 @@ class usersService {
             },
             body: JSON.stringify(values)
         });
-        if (!response.ok) {
-            throw new Error(`Не удаётся добавить пользователя ${response.status}`);
-        }
-
-        const data = await response.json();
-        return data;
+        return response;
     }
 }
-
 export default new usersService();

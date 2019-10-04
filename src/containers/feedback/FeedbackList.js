@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import autoBind from 'react-autobind';
 import { connect } from 'react-redux';
-import "antd/dist/antd.css";
-import * as pollsActions from '../store/polls/actions';
-import * as pollsSelectors from '../store/polls/reducer';
-import { withRouter, Link } from 'react-router-dom';
-import { List, Icon, Button } from 'antd';
+import * as feedbackActions from '../../store/feedback/actions';
+import * as feedbackSelectors from '../../store/feedback/reducer';
+import { List, Icon} from 'antd';
+import { withRouter,Link } from 'react-router-dom';
+
 
 const IconText = ({ type, text }) => (
     <span>
@@ -14,25 +14,20 @@ const IconText = ({ type, text }) => (
     </span>
 );
 
-class questionsList extends Component {
+class feedbackList extends Component {
     constructor(props) {
         super(props);
         autoBind(this);
     }
+
     componentDidMount() {
-        this.props.dispatch(pollsActions.fetchQuestionsItems(this.props.match.params.pollId));
+        this.props.dispatch(feedbackActions.fetchFeedbackItems(this.props.match.params.moduleId));
     }
     render() {
-        if (!this.props.match.params.pollId) {
-            return '';
-        }
+        if (!this.props.feedbackArray) return <div>Список вопросов пуст</div>;
+
         return <React.Fragment>
             <h2>Список вопросов</h2>
-            <p>
-                <Link to={`/questionEdit/${this.props.match.params.pollId}/`}>
-                    <Button type="primary">Добавить вопрос</Button>
-                </Link>
-            </p>
             <List
                 itemLayout="horizontal"
                 pagination={{
@@ -41,21 +36,20 @@ class questionsList extends Component {
                     },
                     pageSize: 10,
                 }}
-                dataSource={this.props.questionsArray}
+                dataSource={this.props.feedbackArray}
                 renderItem={item => (
                     <List.Item
                         key={item.id}
                         actions={[
-                            <Link to={`/questionEdit/${this.props.match.params.pollId}/${item.id}`}>
+                            <Link to={`/feedbackEdit/${this.props.match.params.moduleId}/${item.id}`}>
                                 <IconText type="edit-o" text="Редактировать" />
-                            </Link>,
-                            <Link to={`/questionDelete/${this.props.match.params.pollId}/${item.id}`}>
-                                <IconText type="edit-o" text="Удалить" />
                             </Link>
                         ]}
                     >
                         <List.Item.Meta
-                            title={item.title}
+                            title={unescape(item.title)}
+                            description={unescape(item.body)}
+                            content={item.response || ''}
                         />
                     </List.Item>
                 )}
@@ -65,11 +59,10 @@ class questionsList extends Component {
 }
 
 function mapStateToProps(state) {
-    const questionsArray = pollsSelectors.getQuestionsArray(state);
+    const feedbackArray = feedbackSelectors.getFeedbackArray(state);
     return {
-        questionsArray
+        feedbackArray
     };
 }
 
-
-export default withRouter(connect(mapStateToProps)(questionsList))
+export default withRouter(connect(mapStateToProps)(feedbackList))

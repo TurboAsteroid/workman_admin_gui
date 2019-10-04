@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
 import autoBind from 'react-autobind';
 import { connect } from 'react-redux';
-import Error404 from "./Error404";
-import * as scheduleActions from '../store/schedule/actions';
-import * as scheduleSelectors from '../store/schedule/reducer';
+import Error404 from "../Error404";
+import * as scheduleActions from '../../store/schedule/actions';
+import * as scheduleSelectors from '../../store/schedule/reducer';
 import { Redirect } from 'react-router'
 import {
     Form, Input, Button, Alert
 } from 'antd'
 
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-import './css/wysiwyg.css';
+import '../css/wysiwyg.css';
 
 class EditSchedule extends Component {
     constructor(props) {
@@ -36,12 +36,13 @@ class EditSchedule extends Component {
                         type={status === "ok" ? "success" : "error"}
                         closable
                     />
-                    <Redirect to={"/1/6/" + this.props.match.params.moduleId }/>
+                    <Redirect to={"/6/" + this.props.match.params.moduleId }/>
                 </React.Fragment>
             )
         } else if (this.props.scheduleDeleteResult) {
             let message = this.props.scheduleDeleteResult.message;
             let status = this.props.scheduleDeleteResult.status;
+            this.props.dispatch(scheduleActions.cleanSaveState())
             return (
                 <React.Fragment>
                     <Alert
@@ -49,7 +50,7 @@ class EditSchedule extends Component {
                         type={status === "ok" ? "success" : "error"}
                         closable
                     />
-                    <Redirect to={"/1/6/" + this.props.match.params.moduleId }/>
+                    <Redirect to={"/6/" + this.props.match.params.moduleId }/>
                 </React.Fragment>
             )
         }
