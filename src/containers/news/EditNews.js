@@ -2,21 +2,19 @@ import React, { Component } from 'react';
 import autoBind from 'react-autobind';
 import { connect } from 'react-redux';
 // import { withRouter } from 'react-router-dom';
-import Error404 from "./Error404";
+import Error404 from "../Error404";
 import { Editor } from 'react-draft-wysiwyg';
-import * as newsActions from '../store/news/actions';
+import * as newsActions from '../../store/news/actions';
 import { Redirect } from 'react-router'
 import { EditorState, convertToRaw, ContentState } from 'draft-js';
 import htmlToDraft from 'html-to-draftjs';
 import draftToHtml from 'draftjs-to-html';
-import * as newsSelectors from '../store/news/reducer';
+import * as newsSelectors from '../../store/news/reducer';
 import {
-    Upload, Form, Input, Button, Alert, Icon
+    Upload, Form, Input, Button, Alert, Icon, Card
 } from 'antd'
-// import config from '../config';
-
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-import './css/wysiwyg.css';
+import '../css/wysiwyg.css';
 
 class EditNews extends Component {
     constructor(props) {
@@ -24,7 +22,8 @@ class EditNews extends Component {
         this.state = {
             newsContent: undefined,
             fileList: [],
-        };
+            imageCount: 0
+        }
 
         autoBind(this);
     }
@@ -57,7 +56,7 @@ class EditNews extends Component {
                         type={status === "ok" ? "success" : "error"}
                         closable
                     />
-                    <Redirect to={"/1/2/" + this.props.match.params.moduleId}/>
+                    <Redirect to={"/2/" + this.props.match.params.moduleId}/>
                 </React.Fragment>
             )
         } else if (this.props.newsDeleteResult) {
@@ -70,7 +69,7 @@ class EditNews extends Component {
                         type={status === "ok" ? "success" : "error"}
                         closable
                     />
-                    <Redirect to={"/1/2/" + this.props.match.params.moduleId }/>
+                    <Redirect to={"/2/" + this.props.match.params.moduleId }/>
                 </React.Fragment>
             )
         }
@@ -78,16 +77,8 @@ class EditNews extends Component {
     componentWillUpdate(nextProps) {
         if(!this.state.newsContent && nextProps.newsObject) {
             this.getWysiwygData(nextProps.newsObject.full_description);
-            let fileList = [];
-            if (nextProps.newsObject.image && nextProps.newsObject.image.data) {
-                fileList.push({
-                    uid: '-1',
-                    name: 'newsImage.png',
-                    status: 'done',
-                    // url: `${config.api}admin/news/pictures?newsId=${nextProps.newsObject.id}&moduleId=${nextProps.newsObject.module_id}&type=logo`,
-                    // thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-                })
-            }
+            let fileList = nextProps.newsObject.galery || [];
+
             this.setState({
                 fileList
             });
@@ -112,36 +103,93 @@ class EditNews extends Component {
             this.props.dispatch(newsActions.saveNews(values, this.state.fileList))
         });
     }
-    render() {
+    addImage() {
+        this.setState({
+            imageCount: this.state.imageCount + 1
+        })
+    }
+    removeBlock(index) {
+        let fileList = []
+        for(let i in this.state.fileList) {
+            fileList.push(Object.assign({}, this.state.fileList[i]))
+        }
+        fileList.splice(index, 1)
+        this.setState({fileList})
+    }
+    showImage() {
         const { getFieldDecorator } = this.props.form;
-        const { fileList  } = this.state;
-
-        let newsObject = this.props.newsObject;
-
-        if (!this.props.match.params.moduleId)
-            return <Error404/>;
-
+        let result = [];
+        for(let i = 0; i < this.state.fileList.length; i++) {
+            const props = {
+                accept: "image/*",
+                multiple: false,
+                className: 'upload-list-inline',
+                listType: 'picture',
+                disabled: true,
+                onChange: (info) => {
+                    if (!this.state.fileList.find((element) => {return info.file.uid === element.uid})) {
+                        this.setState({
+                            fileList: [ ...this.state.fileList,  info.file],
+                            imageCount: this.state.imageCount - 1
+                        })
+                    } else {
+                    }
+                },
+                beforeUpload: (file, fileList) => { return false; },
+                fileList: this.state.fileList[i] ? [Object.assign({}, this.state.fileList[i])] : []
+            }
+            result.push(
+                <Card key={i} extra={<Button onClick={() => this.removeBlock(i)}>Удалить <Icon type="delete" /></Button>}>
+                    <Form.Item>
+                        <Upload {...props}>
+                            {this.state.fileList[i] ? <div /> : <Button><Icon type="upload" /> Загрузить</Button>}
+                        </Upload>
+                    </Form.Item>
+                    <Form.Item key={i}
+                               label={(
+                                   <span>Описание изображения</span>
+                               )}
+                    >
+                        {getFieldDecorator(`desc[${i}]`, {
+                            initialValue: this.state.fileList[i] ? this.state.fileList[i].description : '',
+                            rules: [{ whitespace: true }],
+                        })(
+                            <Input />
+                        )}
+                    </Form.Item>
+                </Card>
+            )
+        }
         const props = {
             accept: "image/*",
             multiple: false,
-            onRemove: (file) => {
-                this.setState((state) => {
-                    const index = state.fileList.indexOf(file);
-                    const newFileList = state.fileList.slice();
-                    newFileList.splice(index, 1);
-                    return {
-                        fileList: newFileList,
-                    };
-                });
+            className: 'upload-list-inline',
+            listType: 'picture',
+            disabled: false,
+            onChange: (info) => {
+                this.setState({fileList: [ ...this.state.fileList,  info.file]})
             },
-            beforeUpload: (file) => {
-                this.setState(state => ({
-                    fileList: [file],
-                }));
-                return false;
-            },
-            fileList,
-        };
+            beforeUpload: (file, fileList) => {return false;},
+            defaultFileList: []
+        }
+        result.push(
+            <Card >
+                <Form.Item label={(<span>Выберете дополнительное изображение новости</span>)}>
+                    <Upload {...props}>
+                        <Button><Icon type="upload" /> Загрузить</Button>
+                    </Upload>
+
+                </Form.Item>
+            </Card>
+        )
+        return result
+    }
+    render() {
+        if (!this.state.newsContent && this.props.match.params.newsId !== undefined)  return <div>Загрузка...</div>;
+        const { getFieldDecorator } = this.props.form;
+        let newsObject = this.props.newsObject;
+        if (!this.props.match.params.moduleId)
+            return <Error404/>;
 
         return (
             <React.Fragment>
@@ -192,20 +240,6 @@ class EditNews extends Component {
                     </Form.Item>
 
                     <Form.Item
-                        label={(
-                            <span>
-                                Выберете картинку новости
-                            </span>
-                        )}
-                    >
-                        <Upload {...props}>
-                            <Button>
-                                <Icon type="upload" /> Нажмите чтобы выбрать
-                            </Button>
-                        </Upload>
-                    </Form.Item>
-
-                    <Form.Item
                         label="Основное содержимое новости"
                     >
                         <Editor
@@ -217,6 +251,8 @@ class EditNews extends Component {
                             // toolbarCustomButtons={[<CustomOption actions={this.switchType}/>]}
                         />
                     </Form.Item>
+
+                    {this.showImage()}
 
                     {this.showAlert()}
                     <Form.Item>

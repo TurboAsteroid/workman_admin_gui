@@ -1,34 +1,37 @@
 import React, { Component } from 'react';
 import autoBind from 'react-autobind';
 import { connect } from 'react-redux';
-import "antd/dist/antd.css";
-import * as pollsActions from '../store/polls/actions';
-import * as pollsSelectors from '../store/polls/reducer';
-import { withRouter, Link } from 'react-router-dom';
+import * as newsActions from '../../store/news/actions';
+import * as newsSelectors from '../../store/news/reducer';
 import { List, Icon, Button } from 'antd';
+import { withRouter,Link } from 'react-router-dom';
+
 
 const IconText = ({ type, text }) => (
     <span>
-        <Icon type={type} style={{ marginRight: 8 }} />
+            <Icon type={type} style={{ marginRight: 8 }} />
         {text}
-    </span>
+        </span>
 );
 
-class pollsList extends Component {
+class newsList extends Component {
     constructor(props) {
         super(props);
         autoBind(this);
     }
+
     componentDidMount() {
-        this.props.dispatch(pollsActions.fetchPollsItems(this.props.match.params.moduleId));
+        this.props.dispatch(newsActions.fetchNewsItems(this.props.match.params.moduleId));
     }
     render() {
+        if (!this.props.newsArray) return <div>Список новостей пуст</div>;
+
         return <React.Fragment>
-            <h2>Список голосований</h2>
+            <h2>Список новостей</h2>
 
             <p>
-                <Link to={`/pollEdit/${this.props.match.params.moduleId}/`}>
-                    <Button type="primary">Добавить опрос</Button>
+                <Link to={`/newsEdit/${this.props.match.params.moduleId}/`}>
+                    <Button type="primary">Добавить новость</Button>
                 </Link>
             </p>
             <List
@@ -39,16 +42,13 @@ class pollsList extends Component {
                     },
                     pageSize: 10,
                 }}
-                dataSource={this.props.pollsArray}
+                dataSource={this.props.newsArray}
                 renderItem={item => (
                     <List.Item
                         key={item.id}
                         actions={[
-                            <Link to={`/pollEdit/${this.props.match.params.moduleId}/${item.id}`}>
+                            <Link to={`/newsEdit/${this.props.match.params.moduleId}/${item.id}`}>
                                 <IconText type="edit-o" text="Редактировать" />
-                            </Link>,
-                            <Link to={`/pollDelete/${this.props.match.params.moduleId}/${item.id}`}>
-                                <IconText type="edit-o" text="Удалить" />
                             </Link>
                         ]}
                     >
@@ -61,15 +61,15 @@ class pollsList extends Component {
             />
         </React.Fragment>
     }
+
 }
 
 function mapStateToProps(state) {
 
-    const pollsArray = pollsSelectors.getPollsArray(state);
+    const newsArray = newsSelectors.getNewsArray(state);
     return {
-        pollsArray
+        newsArray
     };
 }
 
-
-export default withRouter(connect(mapStateToProps)(pollsList))
+export default withRouter(connect(mapStateToProps)(newsList))

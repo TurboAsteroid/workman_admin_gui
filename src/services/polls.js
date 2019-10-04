@@ -1,78 +1,33 @@
 import config from '../config';
+import helper from '../helper';
 
 class pollsService {
     async getQuestionsArray(pollId) {
-        const url = `${config.api}admin/polls/questions/list/${pollId}`;
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-                Accept: 'application/json'
-            }
-        });
-        if (!response.ok) {
-            throw new Error(`Не удаётся получить список опросов ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        return data;
+        const response = await helper.ajax(`${config.api}admin/polls/questions/list/${pollId}`);
+        return response;
     }
     async getPollsArray(moduleId) {
-        const url = `${config.api}admin/polls/list/${moduleId}`;
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-                Accept: 'application/json'
-            }
-        });
-        if (!response.ok) {
-            throw new Error(`Не удаётся получить список опросов ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        return data;
+        const response = await helper.ajax(`${config.api}admin/polls/list/${moduleId}`);
+        return response;
     }
     async getQuestion(questionId) {
         if (!questionId) {
             return undefined;
         }
-        const url = `${config.api}admin/polls/question/${questionId}`;
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-                Accept: 'application/json'
-            }
-        });
-        if (!response.ok) {
-            throw new Error(`Не удаётся получить данные вопроса ${response.status}`);
-        }
-        const data = await response.json();
-        return data;
+        const response = await helper.ajax(`${config.api}admin/polls/question/${questionId}`);
+        return response;
     }
     async getPoll(pollId) {
         if (!pollId) {
             return undefined;
         }
-        const url = `${config.api}admin/polls/details/${pollId}`;
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-                Accept: 'application/json'
-            }
-        });
-        if (!response.ok) {
-            throw new Error(`Не удаётся получить данные опроса ${response.status}`);
-        }
-        const data = await response.json();
-        return data;
+        const response = await helper.ajax(`${config.api}admin/polls/details/${pollId}`);
+        return response;
     }
     async savePoll(poll) {
         if (poll.pollId === undefined) poll.pollId = 0;
 
-        const url = `${config.api}admin/polls/save`;
-
-        const response = await fetch(url, {
+        const response = await helper.ajax(`${config.api}admin/polls/save`, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -80,20 +35,11 @@ class pollsService {
             },
             body: JSON.stringify(poll)
         });
-        if (!response.ok) {
-            throw new Error(`Не удаётся сохранить опрос ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        return data;
+        return response;
     }
     async saveQuestion(question) {
         if (question.id === undefined) question.id = 0;
-
-        const url = `${config.api}admin/polls/question/save`;
-
-        const response = await fetch(url, {
+        const response = await helper.ajax(`${config.api}admin/polls/question/save`, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -101,13 +47,7 @@ class pollsService {
             },
             body: JSON.stringify(question)
         });
-        if (!response.ok) {
-            throw new Error(`Не удаётся сохранить опрос ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        return data;
+        return response;
     }
 }
 

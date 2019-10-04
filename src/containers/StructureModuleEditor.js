@@ -19,17 +19,17 @@ class StructureModuleEditor extends Component {
     }
 
     onSelect = (selectedKeys, e) => {
-        this.props.history.push('/'+ this.props.match.params.mainMenuId + '/' + e.node.props.typeId + '/' +selectedKeys)
+        this.props.history.push('/' + e.node.props.typeId + '/' +selectedKeys)
     };
 
-    createTreeNode(root) {
+    createAdminTree(root) {
         let parentsList = this.props.structureObject[0];
         let structureById = this.props.structureObject[1];
 
         let children = [];
         for(let i in parentsList[root]) {
             if(parentsList[root][i] !== root)
-                children.push(this.createTreeNode(parentsList[root][i]));
+                children.push(this.createAdminTree(parentsList[root][i]));
         }
 
         return(
@@ -37,6 +37,22 @@ class StructureModuleEditor extends Component {
                 {children}
             </TreeNode>
         )
+    };
+
+    createTreeNode() {
+        if (this.props.structureObject[0] !== false) {
+            return this.createAdminTree(ROOT_KEY)
+        }
+        let structureById = this.props.structureObject[1];
+
+        let results = [];
+        for(let i in structureById) {
+            results.push(
+                <TreeNode title={structureById[i].name} key={i} selectable={true} typeId={structureById[i].type} />
+            );
+        }
+
+        return results
     }
 
     componentDidMount() {
@@ -54,7 +70,7 @@ class StructureModuleEditor extends Component {
                         onSelect={this.onSelect}
                         onExpand={this.onExpand}
                     >
-                        {this.createTreeNode(ROOT_KEY)}
+                        {this.createTreeNode()}
                     </Tree>
                 </Layout>
                 <div style={{ overflow: "hidden", padding: "0 20px"}}>

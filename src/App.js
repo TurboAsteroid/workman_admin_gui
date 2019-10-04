@@ -1,17 +1,15 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {Layout} from 'antd';
-import MainMenu from './containers/MainMenu';
 import MainRouterContent from './containers/MainRouterContent';
 import { BrowserRouter as Router } from 'react-router-dom';
 import "antd/dist/antd.css";
 
 
 import autoBind from 'react-autobind';
-import * as mainMenuActions from './store/mainMenu/actions';
 import * as mainMenuSelectors from './store/mainMenu/reducer';
 
-const { Header, Content, Sider } = Layout;
+const { Header, Content } = Layout;
 
 
 class App extends Component {
@@ -21,17 +19,17 @@ class App extends Component {
     }
 
     componentDidMount() {
-        this.props.dispatch(mainMenuActions.fetchMenuItems());
+        //this.props.dispatch(mainMenuActions.fetchMenuItems());
     }
 
-    renderLoading() {
-        return (
-            <p>Loading...</p>
-        );
-    }
+    // renderLoading() {
+    //     return (
+    //         <p>Loading...</p>
+    //     );
+    // }
 
     render() {
-        if (!this.props.mainMenuArray) return this.renderLoading();
+        // if (!this.props.mainMenuArray) return this.renderLoading();
         return (<Router>
             <Layout className="App">
                 <Header className="header" style={{
@@ -42,13 +40,13 @@ class App extends Component {
                     </div>
                 </Header>
                 <Layout>
-                    <Sider style={{
+                    {/*<Sider style={{
                         overflow: 'auto', height: '100%', position: 'fixed', left: 0,
                         borderRight: '2px solid #ccc', width: '200px'
                     }}>
                         <MainMenu mainMenuArray={this.props.mainMenuArray} />
-                    </Sider>
-                    <Layout style={{ marginLeft: 200, padding: '24px' }}>
+                    </Sider>*/}
+                    <Layout >
                          <Content style={{
                             background: '#fff', padding: 24, margin: 0, minHeight: 300,
                         }}

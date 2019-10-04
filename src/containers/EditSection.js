@@ -6,24 +6,23 @@ import Error404 from "./Error404";
 import { Editor } from 'react-draft-wysiwyg';
 import * as structureSelectors from '../store/structure/reducer';
 import * as sectionSelectors from '../store/section/reducer';
-import NewsList from './NewsList';
-import PollsList from './PollsList';
-import ScheduleItemList from './ScheduleList';
+import NewsList from './news/NewsList';
+import Gallery from './gallery/EditGallery';
+import FeedbackList from './feedback/FeedbackList';
+import PollsList from './polls/PollsList';
+import ScheduleItemList from './schedule/ScheduleList';
 import { EditorState, convertToRaw, ContentState } from 'draft-js';
 import htmlToDraft from 'html-to-draftjs';
 import draftToHtml from 'draftjs-to-html';
 import * as sectionActions from '../store/section/actions';
+import AddUserModule from './AddUserModule'
 import {
-    Form, Input, Button, Select, Alert
+    Form, Input, Button, Alert
 } from 'antd'
 import * as structureActions from '../store/structure/actions';
 
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import './css/wysiwyg.css';
-
-
-const { Option } = Select;
-
 
 class EditSection extends Component {
     constructor(props) {
@@ -68,18 +67,6 @@ class EditSection extends Component {
         });
     }
 
-    // getAdditionalFields() {
-    //     switch (this.props.match.params.typeModule) {
-    //         case "2":
-    //         case "4":
-    //             return(<NewsList />);
-    //         case "3":
-    //             return(<PollsList />);
-    //         default:
-    //             return;
-    //     }
-    // }
-
     getContentEditor() {
         switch (this.props.match.params.typeModule) {
             case "1":
@@ -108,24 +95,15 @@ class EditSection extends Component {
                 return(<PollsList />);
             case "6":
                 return(<ScheduleItemList />);
+            case "12":
+                return(<FeedbackList />);
+            case "25":
+                return(<AddUserModule />);
+            case "26":
+                return(<Gallery />);
             default:
                 return;
         }
-
-    }
-    getsSelectOptions (root, level) {
-        let parentsList = this.props.structureObject[0];
-        let structureById = this.props.structureObject[1];
-        let r = [];
-        r.push(<Option value={root} key={root}>{level + structureById[root].name}</Option>);
-        level += "_";
-        for(let i in parentsList[root]) {
-            if(parentsList[root][i] !== root) {
-                let subLevel = this.getsSelectOptions(parentsList[root][i], level);
-                r = r.concat(subLevel);
-            }
-        }
-        return r;
     }
 
     handleSubmit (e) {
@@ -143,11 +121,7 @@ class EditSection extends Component {
         });
     }
     render() {
-
         const { getFieldDecorator } = this.props.form;
-        const hide = {
-            display: "none"
-        };
 
         if (!this.props.match.params.typeModule || !this.props.match.params.moduleId)
             return <Error404/>;
@@ -189,23 +163,6 @@ class EditSection extends Component {
                             <Input />
                         )}
                     </Form.Item>
-
-                    <div style={hide}>
-                        <Form.Item
-                            label="Родительский раздел"
-                        >
-                            {getFieldDecorator('parent_id', {
-                                initialValue: textModuleData.parent_id,
-                                rules: [
-                                    { required: true },
-                                ],
-                            })(
-                                <Select placeholder="Выберете родительский раздел">
-                                    {this.getsSelectOptions(1, "")}
-                                </Select>
-                            )}
-                        </Form.Item>
-                    </div>
 
                     {this.getContentEditor()}
 

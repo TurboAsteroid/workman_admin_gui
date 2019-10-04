@@ -1,21 +1,10 @@
 import config from '../config';
+import helper from '../helper';
 
 class MainMenuService {
     async getMainMenuArray() {
-        const url = `${config.api}admin/mainMenu`;
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-                Accept: 'application/json'
-            }
-        });
-        if (!response.ok) {
-            throw new Error(`Не удаётся получить главное меню админки ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        return data;
+        const response = await helper.ajax(`${config.api}admin/mainMenu`);
+        return response;
     }
 }
 

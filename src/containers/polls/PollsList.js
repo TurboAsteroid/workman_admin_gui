@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import autoBind from 'react-autobind';
 import { connect } from 'react-redux';
 import "antd/dist/antd.css";
-import * as scheduleActions from '../store/schedule/actions';
-import * as scheduleSelectors from '../store/schedule/reducer';
+import * as pollsActions from '../../store/polls/actions';
+import * as pollsSelectors from '../../store/polls/reducer';
 import { withRouter, Link } from 'react-router-dom';
 import { List, Icon, Button } from 'antd';
 
@@ -14,21 +14,21 @@ const IconText = ({ type, text }) => (
     </span>
 );
 
-class schedule extends Component {
+class pollsList extends Component {
     constructor(props) {
         super(props);
         autoBind(this);
     }
     componentDidMount() {
-        this.props.dispatch(scheduleActions.fetchScheduleItems(this.props.match.params.moduleId));
+        this.props.dispatch(pollsActions.fetchPollsItems(this.props.match.params.moduleId));
     }
     render() {
         return <React.Fragment>
-            <h2>Список элементов</h2>
+            <h2>Список голосований</h2>
 
             <p>
-                <Link to={`/scheduleEdit/${this.props.match.params.moduleId}/`}>
-                    <Button type="primary">Добавить элемент</Button>
+                <Link to={`/pollEdit/${this.props.match.params.moduleId}/`}>
+                    <Button type="primary">Добавить опрос</Button>
                 </Link>
             </p>
             <List
@@ -39,18 +39,22 @@ class schedule extends Component {
                     },
                     pageSize: 10,
                 }}
-                dataSource={this.props.scheduleArray}
+                dataSource={this.props.pollsArray}
                 renderItem={item => (
                     <List.Item
                         key={item.id}
                         actions={[
-                            <Link to={`/scheduleEdit/${this.props.match.params.moduleId}/${item.id}`}>
+                            <Link to={`/pollEdit/${this.props.match.params.moduleId}/${item.id}`}>
                                 <IconText type="edit-o" text="Редактировать" />
+                            </Link>,
+                            <Link to={`/pollDelete/${this.props.match.params.moduleId}/${item.id}`}>
+                                <IconText type="edit-o" text="Удалить" />
                             </Link>
                         ]}
                     >
                         <List.Item.Meta
-                            title={item.header}
+                            title={item.title}
+                            description={item.description}
                         />
                     </List.Item>
                 )}
@@ -61,11 +65,11 @@ class schedule extends Component {
 
 function mapStateToProps(state) {
 
-    const scheduleArray = scheduleSelectors.getScheduleArray(state);
+    const pollsArray = pollsSelectors.getPollsArray(state);
     return {
-        scheduleArray
+        pollsArray
     };
 }
 
 
-export default withRouter(connect(mapStateToProps)(schedule))
+export default withRouter(connect(mapStateToProps)(pollsList))

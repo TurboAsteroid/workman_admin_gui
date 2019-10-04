@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import autoBind from 'react-autobind';
 import { connect } from 'react-redux';
-import Error404 from "./Error404";
-import * as pollsActions from '../store/polls/actions';
-import * as pollsSelectors from '../store/polls/reducer';
+import Error404 from "../Error404";
+import * as pollsActions from '../../store/polls/actions';
+import * as pollsSelectors from '../../store/polls/reducer';
 import {
     Form, Input, Button, Radio
 } from 'antd'
 
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-import './css/wysiwyg.css';
+import '../css/wysiwyg.css';
 
 class EditQuestion extends Component {
     constructor(props) {
