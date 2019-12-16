@@ -10,6 +10,8 @@ import EditQuestion from './polls/EditQuestion'
 import EditSection from './EditSection';
 import EditSchedule from './schedule/EditSchedule';
 import StructureModuleEditor from './StructureModuleEditor'
+import AddUserModule from './AddUserModule'
+import CheckUp from './CheckUp'
 
 class MainRouterContent extends Component {
 
@@ -24,10 +26,12 @@ class MainRouterContent extends Component {
 
                     <Route exact path="/" component={StructureModuleEditor} />
                     <Route exact path="/:typeModule(\d+)/:moduleId(\d+)" component={EditSection} />
+                    <Route path="/checkUp/:moduleId(\d+)" component={CheckUp} />
                     <Route path="/newsEdit/:moduleId(\d+)/:newsId(\d+)?" component={EditNews} />
                     <Route path="/pollEdit/:moduleId(\d+)/:pollId(\d+)?" component={EditPoll} />
                     <Route path="/questionEdit/:pollId(\d+)/:questionId(\d+)?" component={EditQuestion} />
                     <Route path="/scheduleEdit/:moduleId(\d+)/:scheduleId(\d+)?" component={EditSchedule} />
+                    <Route path="/addUser" component={AddUserModule} />
                     <Route component={Error404} />
                 </Switch>
         );

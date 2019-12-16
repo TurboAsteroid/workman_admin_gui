@@ -30,12 +30,22 @@ export default function reduce(state = initialState, action = {}) {
             return state.merge({
                 pollSaveResult: action.pollSaveResult
             });
+        case types.POLL_DELETE:
+            return state.merge({
+                pollDeleteResult: action.pollDeleteResult
+            });
+        case types.QUESTION_DELETE:
+            return state.merge({
+                questionDeleteResult: action.questionDeleteResult
+            });
         case types.POLL_CLEAN:
             return state.merge({
                 pollObject: undefined,
                 pollArray: undefined,
                 questionsArray: undefined,
-                pollSaveResult: undefined
+                pollSaveResult: undefined,
+                pollDeleteResult: undefined,
+                questionDeleteResult: undefined
             });
         default:
             return state;
@@ -61,4 +71,12 @@ export function getQuestionObject(state) {
 export function getPollSaveResult(state) {
     const getPollSaveResult = state.polls.pollSaveResult;
     return getPollSaveResult;
+}
+export function getPollDeleteResult(state) {
+    const getPollDeleteResult = state.polls.pollDeleteResult;
+    return getPollDeleteResult;
+}
+export function getQuestionDeleteResult(state) {
+    const getQuestionDeleteResult = state.polls.questionDeleteResult;
+    return getQuestionDeleteResult;
 }

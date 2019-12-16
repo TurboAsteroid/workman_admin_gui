@@ -8,6 +8,8 @@ import polls from './polls/reducer';
 import schedule from './schedule/reducer';
 import auth from './auth/reducer';
 import gallery from './gallery/reducer';
+import medic from './medic/reducer';
+import checkUp from './checkUp/reducer';
 
 export {
     mainMenu,
@@ -19,5 +21,7 @@ export {
     schedule,
     auth,
     feedback,
-    gallery
+    gallery,
+    medic,
+    checkUp
 };

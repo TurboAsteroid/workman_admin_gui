@@ -46,9 +46,6 @@ class pollsList extends Component {
                         actions={[
                             <Link to={`/pollEdit/${this.props.match.params.moduleId}/${item.id}`}>
                                 <IconText type="edit-o" text="Редактировать" />
-                            </Link>,
-                            <Link to={`/pollDelete/${this.props.match.params.moduleId}/${item.id}`}>
-                                <IconText type="edit-o" text="Удалить" />
                             </Link>
                         ]}
                     >

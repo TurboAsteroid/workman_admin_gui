@@ -62,7 +62,7 @@ class LoginPage extends Component {
                     <Form.Item
                         label={(
                             <span>
-                                Краткое описание опроса
+                                Пароль
                             </span>
                         )}
                     >
@@ -77,7 +77,7 @@ class LoginPage extends Component {
 
                     {this.showAlert()}
                     <Form.Item>
-                        <Button type="primary" htmlType="submit">Сохранить</Button>
+                        <Button type="primary" htmlType="submit">Войти</Button>
                     </Form.Item>
                 </Form>
             </React.Fragment>

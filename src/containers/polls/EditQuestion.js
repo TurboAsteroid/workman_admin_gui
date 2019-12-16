@@ -5,8 +5,9 @@ import Error404 from "../Error404";
 import * as pollsActions from '../../store/polls/actions';
 import * as pollsSelectors from '../../store/polls/reducer';
 import {
-    Form, Input, Button, Radio
+    Form, Input, Button, Radio, Alert
 } from 'antd'
+import { Redirect } from 'react-router'
 
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import '../css/wysiwyg.css';
@@ -32,7 +33,9 @@ class EditQuestion extends Component {
             options: tmpOptions
         });
     }
-
+    delete() {
+        this.props.dispatch(pollsActions.deleteQuestion(this.props.match.params.questionId))
+    }
     createOptions(getFieldDecorator) {
         let options = []
         let optionsArray = this.state.options;
@@ -68,7 +71,27 @@ class EditQuestion extends Component {
             this.props.dispatch(pollsActions.saveQuestion(values))
         });
     }
+    showAlert(){
+        if (this.props.questionDeleteResult) {
+            let resultObject = {};
+            resultObject = this.props.questionDeleteResult;
+            console.log(resultObject);
+            let message = resultObject.message;
+            let status = resultObject.status;
+            this.props.dispatch(pollsActions.cleanSaveState());
 
+            return (
+                <React.Fragment>
+                    <Alert
+                        message={message}
+                        type={status === "ok" ? "success" : "error"}
+                        closable
+                    />
+                    <Redirect to={`/pollEdit/${resultObject.module_id}/${resultObject.poll_id}` }/>
+                </React.Fragment>
+            )
+        }
+    }
     render() {
         const { getFieldDecorator } = this.props.form;
         let questionObject = this.props.questionObject;
@@ -125,9 +148,10 @@ class EditQuestion extends Component {
                     </p>
                     {this.createOptions(getFieldDecorator)}
 
-                    {/*this.showAlert()*/}
+                    {this.showAlert()}
                     <Form.Item>
                         <Button type="primary" htmlType="submit">Сохранить</Button>
+                        <Button type="danger" onClick={this.delete}>Удалить</Button>
                     </Form.Item>
                 </Form>
             </React.Fragment>
@@ -137,9 +161,11 @@ class EditQuestion extends Component {
 
 function mapStateToProps(state) {
     const questionObject = pollsSelectors.getQuestionObject(state);
+    const questionDeleteResult = pollsSelectors.getQuestionDeleteResult(state);
 
     return {
         questionObject,
+        questionDeleteResult
     };
 }
 

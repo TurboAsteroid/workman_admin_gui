@@ -48,9 +48,6 @@ class questionsList extends Component {
                         actions={[
                             <Link to={`/questionEdit/${this.props.match.params.pollId}/${item.id}`}>
                                 <IconText type="edit-o" text="Редактировать" />
-                            </Link>,
-                            <Link to={`/questionDelete/${this.props.match.params.pollId}/${item.id}`}>
-                                <IconText type="edit-o" text="Удалить" />
                             </Link>
                         ]}
                     >
