@@ -22,7 +22,8 @@ class EditNews extends Component {
         this.state = {
             newsContent: undefined,
             fileList: [],
-            imageCount: 0
+            imageCount: 0,
+            formSend: false
         }
 
         autoBind(this);
@@ -48,6 +49,9 @@ class EditNews extends Component {
         if (this.props.newsSaveResult) {
             let message = this.props.newsSaveResult.message;
             let status = this.props.newsSaveResult.status;
+            this.setState({
+                formSend: false
+            })
             this.props.dispatch(newsActions.cleanSaveState())
             return (
                 <React.Fragment>
@@ -99,7 +103,9 @@ class EditNews extends Component {
             values.full_description = this.state.newsContent ? draftToHtml(convertToRaw(this.state.newsContent.getCurrentContent())) : "";
             values.moduleId = this.props.match.params.moduleId;
             values.newsId = this.props.match.params.newsId ;
-
+            this.setState({
+                formSend: true
+            })
             this.props.dispatch(newsActions.saveNews(values, this.state.fileList))
         });
     }
@@ -139,7 +145,7 @@ class EditNews extends Component {
                 fileList: this.state.fileList[i] ? [Object.assign({}, this.state.fileList[i])] : []
             }
             result.push(
-                <Card key={i} extra={<Button onClick={() => this.removeBlock(i)}>Удалить <Icon type="delete" /></Button>}>
+                <Card key={i} style={{ width: '30%', marginBottom: 20, marginRight: '1%', float: 'left',  }}>
                     <Form.Item>
                         <Upload {...props}>
                             {this.state.fileList[i] ? <div /> : <Button><Icon type="upload" /> Загрузить</Button>}
@@ -157,6 +163,7 @@ class EditNews extends Component {
                             <Input />
                         )}
                     </Form.Item>
+                    <Button onClick={() => this.removeBlock(i)}>Удалить <Icon type="delete" /></Button>
                 </Card>
             )
         }
@@ -173,7 +180,7 @@ class EditNews extends Component {
             defaultFileList: []
         }
         result.push(
-            <Card >
+            <Card key={this.state.fileList.length + 1} style={{ clear: 'both' }}>
                 <Form.Item label={(<span>Выберете дополнительное изображение новости</span>)}>
                     <Upload {...props}>
                         <Button><Icon type="upload" /> Загрузить</Button>
@@ -225,21 +232,6 @@ class EditNews extends Component {
                     </Form.Item>
 
                     <Form.Item
-                        label={(
-                            <span>
-                                Ссылка на новость с другого ресурса
-                            </span>
-                        )}
-                    >
-                        {getFieldDecorator('link', {
-                            initialValue: newsObject ? newsObject.link || "" : "",
-                            rules: [{ whitespace: true }],
-                        })(
-                            <Input />
-                        )}
-                    </Form.Item>
-
-                    <Form.Item
                         label="Основное содержимое новости"
                     >
                         <Editor
@@ -256,8 +248,8 @@ class EditNews extends Component {
 
                     {this.showAlert()}
                     <Form.Item>
-                        <Button type="primary" htmlType="submit">Сохранить</Button>
-                        <Button type="danger" onClick={this.delete}>Удалить</Button>
+                        <Button type="primary" htmlType="submit" disabled = {this.state.formSend} loading = {this.state.formSend}>Сохранить</Button>
+                        <Button type="danger" onClick={this.delete} disabled = {this.state.formSend} loading = {this.state.formSend}>Удалить</Button>
                     </Form.Item>
                 </Form>
             </React.Fragment>

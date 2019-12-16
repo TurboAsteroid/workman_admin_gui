@@ -12,10 +12,10 @@ export function fetchScheduleItems(moduleId) {
         }
     };
 }
-export function saveSchedule(schedule) {
+export function saveSchedule(schedule, filesList) {
     return async(dispatch, getState) => {
         try {
-            const scheduleSaveResult = await scheduleService.saveSchedule(schedule);
+            const scheduleSaveResult = await scheduleService.saveSchedule(schedule, filesList);
             dispatch({ type: types.SCHEDULE_POST, scheduleSaveResult });
         } catch (error) {
             console.error("saveSchedule", error);

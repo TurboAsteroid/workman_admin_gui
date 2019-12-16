@@ -92,7 +92,7 @@ class EditGallery extends Component {
                 fileList: this.state.fileList[i] ? [Object.assign({}, this.state.fileList[i])] : []
             }
             result.push(
-                <Card key={i} extra={<Button onClick={() => this.removeBlock(i)}>Удалить <Icon type="delete" /></Button>}>
+                <Card key={i} style={{ width: '30%', marginBottom: 20, marginRight: '1%', float: 'left',  }}>
                     <Form.Item>
                         <Upload {...props}>
                             {this.state.fileList[i] ? <div /> : <Button><Icon type="upload" /> Загрузить</Button>}
@@ -110,6 +110,7 @@ class EditGallery extends Component {
                             <Input />
                         )}
                     </Form.Item>
+                    <Button onClick={() => this.removeBlock(i)}>Удалить <Icon type="delete" /></Button>
                 </Card>
             )
         }
@@ -126,7 +127,7 @@ class EditGallery extends Component {
             defaultFileList: []
         }
         result.push(
-            <Card key={this.state.fileList.length + 1}>
+            <Card key={this.state.fileList.length + 1} style={{ clear: 'both' }}>
                 <Form.Item label={(<span>Выберете дополнительное изображение новости</span>)}>
                     <Upload {...props}>
                         <Button><Icon type="upload" /> Загрузить</Button>

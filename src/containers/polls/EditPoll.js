@@ -6,7 +6,7 @@ import * as pollsActions from '../../store/polls/actions';
 import * as pollsSelectors from '../../store/polls/reducer';
 import { Redirect } from 'react-router'
 import {
-    Form, Input, Button, DatePicker, Alert
+    Form, Input, Button, DatePicker, Alert, Checkbox
 } from 'antd'
 import QuestionsList from './QuestionsList';
 
@@ -20,7 +20,7 @@ class EditPoll extends Component {
         super(props);
         this.state = {
             pollContent: undefined,
-            questions: []
+            questions: [],
         };
 
         autoBind(this);
@@ -29,12 +29,18 @@ class EditPoll extends Component {
         this.props.dispatch(pollsActions.getPoll(this.props.match.params.pollId));
     }
     showAlert(){
-        if (this.props.pollSaveResult) {
-            let message = this.props.pollSaveResult.message;
-            let status = this.props.pollSaveResult.status;
-            let pollId = this.props.pollSaveResult.pollId;
+        if (this.props.pollSaveResult || this.props.pollDeleteResult) {
+            let resultObject = {};
+            if (this.props.pollSaveResult) {
+                resultObject = this.props.pollSaveResult;
+            } else if (this.props.pollDeleteResult) {
+                resultObject = this.props.pollDeleteResult;
+            }
+            let message = resultObject.message;
+            let status = resultObject.status;
+            let pollId = resultObject.pollId;
             this.props.dispatch(pollsActions.cleanSaveState())
-            if (!pollId) {
+            // if (!pollId) {
                 return (
                     <React.Fragment>
                         <Alert
@@ -45,42 +51,22 @@ class EditPoll extends Component {
                         <Redirect to={"/3/" + this.props.match.params.moduleId }/>
                     </React.Fragment>
                 )
-            }
-            return (
-                <React.Fragment>
-                    <Alert
-                        message={message}
-                        type={status === "ok" ? "success" : "error"}
-                        closable
-                    />
-                    <Redirect to={"/pollEdit/" + this.props.match.params.moduleId + '/' + pollId}/>
-                </React.Fragment>
-            )
+            // }
+            // return (
+            //     <React.Fragment>
+            //         <Alert
+            //             message={message}
+            //             type={status === "ok" ? "success" : "error"}
+            //             closable
+            //         />
+            //         <Redirect to={"/pollEdit/" + this.props.match.params.moduleId + '/' + pollId}/>
+            //     </React.Fragment>
+            // )
         }
     }
-    // componentWillUpdate(nextProps) {
-    //     if(!this.state.newsContent && nextProps.newsObject) {
-    //         this.getWysiwygData(nextProps.newsObject.full_description);
-    //         let fileList = [];
-    //         if (nextProps.newsObject.image && nextProps.newsObject.image.data) {
-    //             fileList.push({
-    //                 uid: '-1',
-    //                 name: 'newsImage.png',
-    //                 status: 'done',
-    //                 // url: `${config.api}admin/news/pictures?newsId=${nextProps.newsObject.id}&moduleId=${nextProps.newsObject.module_id}&type=logo`,
-    //                 // thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    //             })
-    //         }
-    //         this.setState({
-    //             fileList
-    //         });
-    //     }
-    // }
-    // onEditorStateChange (newsContent) {
-    //     this.setState({
-    //         newsContent,
-    //     });
-    // }
+    delete() {
+        this.props.dispatch(pollsActions.deletePoll(this.props.match.params.pollId))
+    }
     handleSubmit (e){
         e.preventDefault();
         this.props.form.validateFieldsAndScroll((err, values) => {
@@ -91,7 +77,6 @@ class EditPoll extends Component {
             values.dateEnd = values.dateEnd.format('YYYY-MM-DD HH:mm:ss');
             values.pollId = this.props.match.params.pollId;
             values.moduleId = this.props.match.params.moduleId;
-            console.log(values);
             this.props.dispatch(pollsActions.savePoll(values))
         });
     }
@@ -102,12 +87,12 @@ class EditPoll extends Component {
     }
     render() {
         const { getFieldDecorator } = this.props.form;
-        // const { fileList  } = this.state;
 
         let pollObject = this.props.pollObject;
 
         if (!this.props.match.params.moduleId)
             return <Error404/>;
+        // if (!pollObject) return <div>Загрузка...</div>
 
         return (
             <React.Fragment>
@@ -144,6 +129,31 @@ class EditPoll extends Component {
                     <Form.Item
                         label={(
                             <span>
+                                Опубликовать опрос
+                            </span>
+                        )}
+                    >
+                        {getFieldDecorator('active', {
+
+                        })(
+                            <Checkbox defaultChecked={(pollObject !== undefined && pollObject.active) ? true : false} >Поставьте данный флажок когда полностью подготовите опрос</Checkbox>
+                        )}
+                    </Form.Item>
+                    <Form.Item
+                        label={(
+                            <span>
+                                Завершить опрос
+                            </span>
+                        )}
+                    >
+                        {getFieldDecorator('closed', {
+                        })(
+                            <Checkbox defaultChecked={(pollObject !== undefined && pollObject.closed) ? true : false} >Поставьте данный флажок когда опрос завершился</Checkbox>
+                        )}
+                    </Form.Item>
+                    <Form.Item style={{display: 'none'}}
+                        label={(
+                            <span>
                                 Дата и время окончания опроса
                             </span>
                         )}
@@ -158,7 +168,6 @@ class EditPoll extends Component {
                                 showTime={{ defaultValue: pollObject ? moment(pollObject.dateEnd) || moment('00:00:00', 'HH:mm:ss') : moment('00:00:00', 'HH:mm:ss') }}
                             />
                         )}
-
                     </Form.Item>
 
                     <QuestionsList />
@@ -166,6 +175,7 @@ class EditPoll extends Component {
                     {this.showAlert()}
                     <Form.Item>
                         <Button type="primary" htmlType="submit">Сохранить</Button>
+                        <Button type="danger" onClick={this.delete}>Удалить</Button>
                     </Form.Item>
                 </Form>
             </React.Fragment>
@@ -176,9 +186,11 @@ class EditPoll extends Component {
 function mapStateToProps(state) {
     const pollObject = pollsSelectors.getPollObject(state);
     const pollSaveResult = pollsSelectors.getPollSaveResult(state);
+    const pollDeleteResult = pollsSelectors.getPollDeleteResult(state);
     return {
         pollObject,
-        pollSaveResult
+        pollSaveResult,
+        pollDeleteResult,
     };
 }
 

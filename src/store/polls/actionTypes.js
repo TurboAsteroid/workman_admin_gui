@@ -7,3 +7,5 @@ export const POLL_CLEAN = 'polls.POLL_CLEAN';
 export const QUESTIONS_FETCHED = 'polls.QUESTIONS_FETCHED';
 export const QUESTION_GET = 'polls.QUESTION_GET';
 export const QUESTION_POST = 'polls.QUESTION_POST';
+export const QUESTION_DELETE = 'polls.QUESTION_DELETE';
+export const POLL_DELETE = 'polls.POLL_DELETE';

@@ -37,6 +37,32 @@ class pollsService {
         });
         return response;
     }
+    async deletePoll(pollId) {
+        if (pollId === undefined) return {status: 'error', message: 'не указан ID опроса'}
+
+        const response = await helper.ajax(`${config.api}admin/polls/delete/`, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({pollId: pollId})
+        });
+        return response;
+    }
+    async deleteQuestion(questionId) {
+        if (questionId === undefined) return {status: 'error', message: 'не указан ID вопроса'}
+
+        const response = await helper.ajax(`${config.api}admin/polls/question/delete/`, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({questionId: questionId})
+        });
+        return response;
+    }
     async saveQuestion(question) {
         if (question.id === undefined) question.id = 0;
         const response = await helper.ajax(`${config.api}admin/polls/question/save`, {

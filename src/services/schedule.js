@@ -20,16 +20,18 @@ class scheduleService {
         });
         return response;
     }
-    async saveSchedule(schedule) {
+    async saveSchedule(schedule, filesList) {
         if (schedule.scheduleId === undefined) schedule.scheduleId = 0;
+        const formData = new FormData()
+        for(let field in schedule) {
+            if (field === 'avatar') formData.append(field, schedule[field] ? schedule[field].file : undefined)
+            else formData.append(field, schedule[field])
+        }
 
         const response = await helper.ajax(`${config.api}admin/schedule/save`, {
             method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(schedule)
+            processData: false,
+            body: formData
         });
         return response;
     }

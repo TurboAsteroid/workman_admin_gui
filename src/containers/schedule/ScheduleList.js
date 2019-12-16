@@ -50,7 +50,7 @@ class schedule extends Component {
                         ]}
                     >
                         <List.Item.Meta
-                            title={item.header}
+                            title={item.name ? `${item.name} ${item.surname} ${item.patronymic}` : item.header}
                         />
                     </List.Item>
                 )}

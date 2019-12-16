@@ -10,6 +10,8 @@ import NewsList from './news/NewsList';
 import Gallery from './gallery/EditGallery';
 import FeedbackList from './feedback/FeedbackList';
 import PollsList from './polls/PollsList';
+import MedicScreen from './medicScreen/MedicScreen';
+import CheckUp from './CheckUp';
 import ScheduleItemList from './schedule/ScheduleList';
 import { EditorState, convertToRaw, ContentState } from 'draft-js';
 import htmlToDraft from 'html-to-draftjs';
@@ -70,6 +72,7 @@ class EditSection extends Component {
     getContentEditor() {
         switch (this.props.match.params.typeModule) {
             case "1":
+            case "7":
                 return(<Form.Item
                     label="Основное содержимое"
                 >
@@ -101,6 +104,10 @@ class EditSection extends Component {
                 return(<AddUserModule />);
             case "26":
                 return(<Gallery />);
+            case "27":
+                return(<MedicScreen />);
+            case "28":
+                return(<CheckUp />);
             default:
                 return;
         }

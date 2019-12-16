@@ -5,21 +5,59 @@ import Error404 from "../Error404";
 import * as scheduleActions from '../../store/schedule/actions';
 import * as scheduleSelectors from '../../store/schedule/reducer';
 import { Redirect } from 'react-router'
+import { Editor } from 'react-draft-wysiwyg';
+import { EditorState, convertToRaw, ContentState } from 'draft-js';
+import htmlToDraft from 'html-to-draftjs';
+import draftToHtml from 'draftjs-to-html';
 import {
-    Form, Input, Button, Alert
+    Form, Input, Button, Alert, Upload, Icon
 } from 'antd'
 
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import '../css/wysiwyg.css';
 
+function getBase64(img, callback) {
+    const reader = new FileReader();
+    reader.addEventListener('load', () => callback(reader.result));
+    reader.readAsDataURL(img);
+}
+
 class EditSchedule extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            scheduleObject: undefined
+            scheduleObject: undefined,
+            descriptionContent: undefined,
+            avatar: undefined,
+            fileList: []
         };
 
         autoBind(this);
+    }
+    getWysiwygData(description){
+        const html = description || '';
+        const contentBlock = htmlToDraft(html);
+        if (contentBlock) {
+            const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
+            const descriptionContent = EditorState.createWithContent(contentState);
+            this.setState({
+                descriptionContent
+            });
+        }
+    }
+    componentWillUpdate(nextProps) {
+        if(!this.state.descriptionContent && nextProps.scheduleObject) {
+            this.getWysiwygData(nextProps.scheduleObject.description);
+            let fileList = nextProps.scheduleObject.avatar ? [nextProps.scheduleObject.avatar] : [];
+            this.setState({
+                fileList
+            });
+        }
+    }
+    onEditorStateChange (descriptionContent) {
+        this.setState({
+            descriptionContent,
+        });
     }
     componentDidMount() {
         this.props.dispatch(scheduleActions.getSchedule(this.props.match.params.scheduleId));
@@ -59,12 +97,14 @@ class EditSchedule extends Component {
         e.preventDefault();
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (err) {
-                console.log('err of form: ', err);
+                console.log('err of form: ', err)
                 return;
             }
+            values.description = this.state.descriptionContent ? draftToHtml(convertToRaw(this.state.descriptionContent.getCurrentContent())) : "";
             values.module_id = this.props.match.params.moduleId;
             values.scheduleId = this.props.match.params.scheduleId || '';
-            this.props.dispatch(scheduleActions.saveSchedule(values))
+
+            this.props.dispatch(scheduleActions.saveSchedule(values, this.state.fileList))
         });
     }
     delete() {
@@ -75,7 +115,6 @@ class EditSchedule extends Component {
         // if (!this.state.scheduleObject) return "";
 
         let points = this.props.scheduleObject ? this.props.scheduleObject.schedule : []
-        console.log(points)
 
         for (let i in points) {
             options.push(<Form.Item key={i}>
@@ -91,11 +130,51 @@ class EditSchedule extends Component {
         }
         return options;
     }
+    showImage() {
+        const { getFieldDecorator } = this.props.form;
+        const uploadButton = (
+            <div>
+                <Icon type='plus' />
+                <div className="ant-upload-text">Upload</div>
+            </div>
+        );
 
+        const props = {
+            accept: "image/*",
+            multiple: false,
+            className: 'avatar-uploader',
+            listType: 'picture-card',
+            // showUploadList: false,
+            disabled: false,
+            onChange: (info) => {
+                let fileList = [...info.fileList];
+                fileList = fileList.slice(-1);
+                this.setState({
+                    avatar: info.file,
+                    fileList
+                })
+            },
+            beforeUpload: (file, fileList) => {return false;},
+            // defaultFileList: [this.props.scheduleObject.avatar],
+            fileList: this.state.fileList
+        }
+        const { imageUrl } = this.state;
+        return <Form.Item label={(<span>Выберете фотографию</span>)}>
+            {getFieldDecorator('avatar', {
+            })(
+                <Upload {...props}>
+                    {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
+                </Upload>
+            )}
+        </Form.Item>
+    }
     render() {
         const { getFieldDecorator } = this.props.form;
 
         let scheduleObject = this.props.scheduleObject;
+
+        if (!scheduleObject)
+            return <div>Загрузка...</div>;
 
         if (!this.props.match.params.moduleId)
             return <Error404/>;
@@ -107,13 +186,13 @@ class EditSchedule extends Component {
                     <Form.Item
                         label={(
                             <span>
-                                Название объекта
+                                Фамилия
                             </span>
                         )}
                     >
-                        {getFieldDecorator('header', {
-                            initialValue: scheduleObject ? scheduleObject.header || "" : "",
-                            rules: [{ required: true, message: 'Введите название объекта', whitespace: true }],
+                        {getFieldDecorator('name', {
+                            initialValue: scheduleObject ? scheduleObject.name || "" : "",
+                            rules: [{ required: true, message: 'Введите фамилию специалиста', whitespace: true }],
                         })(
                             <Input />
                         )}
@@ -121,12 +200,12 @@ class EditSchedule extends Component {
                     <Form.Item
                         label={(
                             <span>
-                                Дополнительное название объекта
+                                Имя
                             </span>
                         )}
                     >
-                        {getFieldDecorator('subheader', {
-                            initialValue: scheduleObject ? scheduleObject.subheader || "" : "",
+                        {getFieldDecorator('surname', {
+                            initialValue: scheduleObject ? scheduleObject.surname || "" : "",
                             rules: [{ whitespace: true }],
                         })(
                             <Input />
@@ -135,12 +214,12 @@ class EditSchedule extends Component {
                     <Form.Item
                         label={(
                             <span>
-                                Краткое описание объекта
+                                Отчество
                             </span>
                         )}
                     >
-                        {getFieldDecorator('description', {
-                            initialValue: scheduleObject ? scheduleObject.description || "" : "",
+                        {getFieldDecorator('patronymic', {
+                            initialValue: scheduleObject ? scheduleObject.patronymic || "" : "",
                             rules: [{ whitespace: true }],
                         })(
                             <Input />
@@ -149,17 +228,32 @@ class EditSchedule extends Component {
                     <Form.Item
                         label={(
                             <span>
-                                Название расписания
+                                Должность
                             </span>
                         )}
                     >
-                        {getFieldDecorator('scheduleName', {
-                            initialValue: scheduleObject ? scheduleObject.scheduleName || "" : "",
+                        {getFieldDecorator('position', {
+                            initialValue: scheduleObject ? scheduleObject.position || "" : "",
                             rules: [{ whitespace: true }],
                         })(
                             <Input />
                         )}
                     </Form.Item>
+
+                    <Form.Item
+                        label="Описание специалиста"
+                    >
+                        <Editor
+                            onEditorStateChange={this.onEditorStateChange}
+                            editorState={this.state.descriptionContent}
+                            wrapperClassName="wysiwyg-wrapper"
+                            editorClassName="wysiwyg-editor"
+                            // editorClassName={classes.editorBlock}
+                            // toolbarCustomButtons={[<CustomOption actions={this.switchType}/>]}
+                        />
+                    </Form.Item>
+
+                    {this.showImage()}
 
                     {this.createSchedule(getFieldDecorator)}
 

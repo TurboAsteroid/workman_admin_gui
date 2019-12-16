@@ -61,6 +61,26 @@ export function savePoll(poll) {
         }
     };
 }
+export function deletePoll(pollId) {
+    return async(dispatch, getState) => {
+        try {
+            const pollDeleteResult = await pollsService.deletePoll(pollId);
+            dispatch({ type: types.POLL_DELETE, pollDeleteResult  });
+        } catch (error) {
+            console.error("deletePoll", error);
+        }
+    };
+}
+export function deleteQuestion(pollId) {
+    return async(dispatch, getState) => {
+        try {
+            const questionDeleteResult = await pollsService.deleteQuestion(pollId);
+            dispatch({ type: types.QUESTION_DELETE, questionDeleteResult  });
+        } catch (error) {
+            console.error("deleteQuestion", error);
+        }
+    };
+}
 export function cleanSaveState() {
     return async(dispatch, getState) => {
         try {
